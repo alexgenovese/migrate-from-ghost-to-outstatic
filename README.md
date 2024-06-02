@@ -1,0 +1,1 @@
+# migrate-from-ghost-to-outstatic
