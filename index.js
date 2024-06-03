@@ -1,5 +1,7 @@
 const fs = require('fs')
-var converter = require('html-to-markdown'); // TODO - da cambiare non traduce bene 
+// var converter = require('html-to-markdown'); // TODO - da cambiare non traduce bene 
+var TurndownService = require('turndown')
+turndownService = new TurndownService()
 
 const path = 'backup.json'
 
@@ -13,20 +15,28 @@ fs.readFile(path, 'utf8', (err, file) => {
   try {
     const data = JSON.parse(file);
     const dir = "./articles";
-    const base_url = "http://alexgenovese.it"
+    const base_url = "https://alexgenovese.it"
+
+    // create folder 
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir);
+    }
 
     // output the parsed data
     data.db[0].data.posts.forEach(element => {
         console.log(element)
 
         // TODO - preg replace GHOST_URL con il link al nuovo sito 
-
-        let body = converter.convert(element.html)
+        // let body = converter.convert(element.html)
+        let body = turndownService.turndown(element.html)
+        body = element.html.replaceAll("__GHOST_URL__", base_url);
+        let image = element.feature_image?.replaceAll("__GHOST_URL__", base_url);
+        
         let content=`---
 title: '${element.title}'
 status: '${element.status}'
 description: '${element.custom_excerpt}'
-coverImage: '${element.feature_image}'
+coverImage: '${image}'
 tags: [{"label":"marketing","value":"marketing"}]
 author:
     name: 'Alex Genovese'
@@ -36,13 +46,12 @@ publishedAt: '${element.published_at}'
 
 ${body}`;
 
-        // create folder 
-        if (!fs.existsSync(dir)){
-            fs.mkdirSync(dir);
-        }
-
+        
         try {
-            fs.writeFileSync('./articles/'+element.slug+'.md', content, { flag: 'w+' });
+            if (element.status == 'published') {
+              fs.writeFileSync('./articles/'+element.slug+'.md', content, { flag: 'w+' });
+            }
+            
             // file written successfully
         } catch (err) {
             console.error(err);
