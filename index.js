@@ -1,11 +1,9 @@
 const fs = require('fs')
-// var converter = require('html-to-markdown'); // TODO - da cambiare non traduce bene 
 var TurndownService = require('turndown')
-turndownService = new TurndownService()
+const turndownService = new TurndownService()
+const backup_path = 'backup.json'
 
-const path = 'backup.json'
-
-fs.readFile(path, 'utf8', (err, file) => {
+fs.readFile(backup_path, 'utf8', (err, file) => {
 
 // check for any errors
   if (err) {
