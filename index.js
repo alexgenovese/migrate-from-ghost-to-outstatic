@@ -2,6 +2,8 @@ const fs = require('fs')
 var TurndownService = require('turndown')
 const turndownService = new TurndownService()
 const backup_path = 'backup.json'
+const converter = require('html-to-markdown');
+
 
 fs.readFile(backup_path, 'utf8', (err, file) => {
 
@@ -23,9 +25,7 @@ fs.readFile(backup_path, 'utf8', (err, file) => {
     // output the parsed data
     data.db[0].data.posts.forEach(element => {
         console.log(element)
-
-        // TODO - preg replace GHOST_URL con il link al nuovo sito 
-        // let body = converter.convert(element.html)
+        
         let body = turndownService.turndown(element.html)
         body = element.html.replaceAll("__GHOST_URL__", base_url);
         let image = element.feature_image?.replaceAll("__GHOST_URL__", base_url);
