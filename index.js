@@ -2,7 +2,6 @@ const fs = require('fs')
 var TurndownService = require('turndown')
 const turndownService = new TurndownService()
 const backup_path = 'backup.json'
-const converter = require('html-to-markdown');
 
 
 fs.readFile(backup_path, 'utf8', (err, file) => {
@@ -15,7 +14,7 @@ fs.readFile(backup_path, 'utf8', (err, file) => {
   try {
     const data = JSON.parse(file);
     const dir = "./articles";
-    const base_url = "https://alexgenovese.it"
+    const base_url = process.env.BASE_URL
 
     // create folder 
     if (!fs.existsSync(dir)){
@@ -37,7 +36,7 @@ description: '${element.custom_excerpt}'
 coverImage: '${image}'
 tags: [{"label":"marketing","value":"marketing"}]
 author:
-    name: 'Alex Genovese'
+    name: '${AUTHOR_NAME}'
 slug: '${element.slug}'
 publishedAt: '${element.published_at}'
 ---
